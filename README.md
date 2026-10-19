@@ -35,26 +35,40 @@ Node.aec provides BIM creators with turnkey licensing and distribution infrastru
 
 The platform decouples workstation license management from individual add-ins:
 
-```
-+--------------------------------------------------------------------------+
-|                              Autodesk Revit                              |
-|                                                                          |
-|  [ "Node.aec" Ribbon Tab ]                                               |
-|                                                                          |
-|  +---------------------------+      +----------------------------------+ |
-|  |    Node.aec Connector     |      |    Partner / Internal Plugins    | |
-|  |       (Central Hub)       |      |    (Sample Plugin, Add-ins...)   | |
-|  |                           |      |                                  | |
-|  |  • Browser SSO (RFC 8252) |      |   var gate = Gate.Validate(slug);| |
-|  |  • Master Entitlements    |      |   if (!gate.IsLicensed)          | |
-|  |    Lease (Ed25519 signed) |      |       return Result.Cancelled;   | |
-|  |  • DPAPI machine storage  |      +----------------------------------+ |
-|  |  • 30-day offline grace   |                        ^                  |
-|  |  • Ribbon deduplication   |                        | local read       |
-|  +---------------------------+                        | (< 1 ms)         |
-|                ^                                      |                  |
-|                +--------------------------------------+                  |
-+--------------------------------------------------------------------------+
+```mermaid
+flowchart TD
+    subgraph Cloud["Node.aec Cloud Platform"]
+        Auth["OAuth 2.0 &amp; Licensing Services"]
+    end
+
+    subgraph Revit["Autodesk Revit (Workstation)"]
+        subgraph Hub["Node.aec Connector (Central Hub)"]
+            direction TB
+            SSO["Browser SSO (RFC 8252 Loopback)"]
+            Lease["Master Entitlements Lease (Ed25519)"]
+            Store["DPAPI Protected Storage (30d Grace)"]
+            Ribbon["Shared Ribbon Tab Deduplication"]
+        end
+
+        subgraph Plugins["Partner / Internal Add-ins"]
+            direction TB
+            Cmd["IExternalCommand.Execute()"]
+            Gate["NodeAec.Licensing.Lite (Micro-Gate)"]
+            Verdict{"IsLicensed?"}
+            Run["Execute Feature"]
+            Prompt["Prompt Activation / Open Connector"]
+
+            Cmd --> Gate
+            Gate --> Verdict
+            Verdict -->|"Yes"| Run
+            Verdict -->|"No"| Prompt
+        end
+
+        Gate -->|"Fast Local Verification (&lt; 1 ms)"| Lease
+        Prompt -.->|"Gate.OpenConnector()"| Hub
+    end
+
+    Auth <-->|"Sync Entitlements &amp; Leases"| Hub
 ```
 
 ---
