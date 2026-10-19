@@ -43,7 +43,7 @@ The platform decouples workstation license management from individual add-ins:
 |                                                                          |
 |  +---------------------------+      +----------------------------------+ |
 |  |    Node.aec Connector     |      |    Partner / Internal Plugins    | |
-|  |       (Central Hub)       |      |    (LOIN Sync, Custom Tools...)  | |
+|  |       (Central Hub)       |      |    (Sample Plugin, Add-ins...)   | |
 |  |                           |      |                                  | |
 |  |  • Browser SSO (RFC 8252) |      |   var gate = Gate.Validate(slug);| |
 |  |  • Master Entitlements    |      |   if (!gate.IsLicensed)          | |
@@ -67,7 +67,6 @@ The platform decouples workstation license management from individual add-ins:
 | [`licensing-lite`](https://github.com/nodeaec/licensing-lite) | `NodeAec.Licensing.Lite` — ultra-fast offline license gate NuGet package. Validates signed leases in 3 lines of code with zero network overhead (`< 1 ms`) and fail-closed design. | NuGet, .NET Standard / .NET Core, Ed25519 |
 | [`templates-revit`](https://github.com/nodeaec/templates-revit) | `dotnet new nodeaec-revit-plugin` — Official template for scaffolding licensed Revit add-ins with multi-targeting (2023–2027), build matrix, and automated installer generation. | `dotnet new`, MSBuild, Inno Setup |
 | [`revit-sample-plugin`](https://github.com/nodeaec/revit-sample-plugin) | Reference Revit add-in illustrating end-to-end license gating and UX integration with `NodeAec.Licensing.Lite`. | C#, Revit API, Sample Integration |
-| [`revit-loin`](https://github.com/nodeaec/revit-loin) | **LOIN Sync** — Revit add-in keeping Level of Information Need (LOIN) spreadsheets and Revit models in sync with model-driven category bindings and automatic schedule generation. | C#, Revit API, ClosedXML, Excel/BIM Sync |
 
 ---
 
