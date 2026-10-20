@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://nodeaec.com.br/assets/img/icon/logo-og.png" alt="Node.aec Logo" width="140" />
+<img src="https://nodeaec.com.br/assets/img/icon/web-app-manifest-192x192.png" alt="Node.aec Logo" width="140" />
 
 # Node.aec
 
