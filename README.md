@@ -78,42 +78,51 @@ flowchart TD
 | Repository | Description | Key Technologies |
 |---|---|---|
 | [`revit-connector`](https://github.com/nodeaec/revit-connector) | Central desktop governance and license manager add-in for **Autodesk Revit 2023–2027**. Implements Browser SSO (RFC 8252 loopback OAuth 2.0), DPAPI-encrypted leases, Ed25519 cryptographic verification, and shared ribbon tab management. | C#, WPF, Revit API, RFC 8252, Ed25519 |
-| [`licensing-lite`](https://github.com/nodeaec/licensing-lite) | `NodeAec.Licensing.Lite` — ultra-fast offline license gate NuGet package. Validates signed leases in 3 lines of code with zero network overhead (`< 1 ms`) and fail-closed design. | NuGet, .NET Standard / .NET Core, Ed25519 |
+| [`licensing-lite`](https://github.com/nodeaec/licensing-lite) | `NodeAec.Licensing.Lite` — offline license gate NuGet package. Validates the signed lease locally in 3 lines of code, with no network calls and a fail-closed design. | NuGet, .NET Framework 4.8 / .NET 8 / .NET 10, Ed25519 |
 | [`templates-revit`](https://github.com/nodeaec/templates-revit) | `dotnet new nodeaec-revit-plugin` — Official template for scaffolding licensed Revit add-ins with multi-targeting (2023–2027), build matrix, and automated installer generation. | `dotnet new`, MSBuild, Inno Setup |
 | [`revit-sample-plugin`](https://github.com/nodeaec/revit-sample-plugin) | Reference Revit add-in illustrating end-to-end license gating and UX integration with `NodeAec.Licensing.Lite`. | C#, Revit API, Sample Integration |
 
 ---
 
-## 🚀 Building a Licensed Revit Add-in in Minutes
+## 🚀 Add Node.aec licensing to a Revit add-in
 
-Install the official template and scaffold your plugin:
+Pick the path that matches where you are. Each one has a step-by-step guide for people, a
+detailed guide for coding agents, and a prompt you can paste into your agent.
+
+| You are… | Start here | For your coding agent |
+|---|---|---|
+| **Starting a new plugin** | [Template README](https://github.com/nodeaec/templates-revit#readme): `dotnet new nodeaec-revit-plugin` | Prompt in the template README; the generated project ships `AGENTS.md` and the skill |
+| **Adding licensing to an existing plugin** | [Partner Integration Guide](https://github.com/nodeaec/revit-connector/blob/main/docs/PARTNER_INTEGRATION.md) | Prompt in the guide; skill [`licensing-integrate`](https://github.com/nodeaec/revit-sample-plugin/tree/main/.agents/skills/licensing-integrate) |
+| **Learning from a working example** | [Sample Plugin README](https://github.com/nodeaec/revit-sample-plugin#readme) | Prompt in the sample README; its `AGENTS.md` |
+
+Quick look at a new plugin:
 
 ```powershell
-# 1. Install the Node.aec Revit plugin template
-dotnet new install https://github.com/nodeaec/templates-revit.git
-
-# 2. Scaffold a new licensed add-in project
-dotnet new nodeaec-revit-plugin -n MyPlugin --ProductSlug my-plugin --AddInId (New-Guid)
-
-# 3. Build for your target Revit version (e.g. Revit 2026)
+dotnet new install NodeAec.Templates.RevitPlugin
+dotnet new nodeaec-revit-plugin -n MyPlugin --ProductSlug my-plugin
 cd MyPlugin
 dotnet build -p:RevitYear=2026
 ```
 
-Integrate license gating in your external command in just 3 lines:
+The whole licensing integration is the first lines of each paid command:
 
 ```csharp
 using NodeAec.Licensing;
 
-var gate = Gate.Validate("my-plugin");
+Snapshot gate = Gate.Validate("my-plugin"); // local check, never throws
 if (!gate.IsLicensed)
 {
-    TaskDialog.Show("License Required", gate.Message);
-    Gate.OpenConnector(); // Opens the Node.aec Hub to activate or resolve issues
+    // The message names the reason and the next step (Portuguese or English).
+    var dialog = new TaskDialog("License Required") { MainContent = gate.GetMessage(MessageLanguage.English) };
+    dialog.AddCommandLink(TaskDialogCommandLinkId.CommandLink1, "Open Node.aec Connector...");
+    if (dialog.Show() == TaskDialogResult.CommandLink1)
+    {
+        Gate.OpenConnector(); // where the user signs in or activates a key
+    }
     return Result.Cancelled;
 }
 
-// Your feature execution here...
+// Your feature runs here, only when licensed.
 ```
 
 ---
