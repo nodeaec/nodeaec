@@ -6,7 +6,7 @@
 
 **Plugins, families, and templates for your BIM project.**
 
-[Website](https://nodeaec.com.br) • [Catalog](https://nodeaec.com.br/products) • [Instagram](https://www.instagram.com/node.aec) • [Contact](mailto:dev@nodeaec.com.br)
+[Website](https://nodeaec.com.br) • [Catalog](https://nodeaec.com.br/products) • [Developer API](https://nodeaec.github.io/developer-api/) • [Instagram](https://www.instagram.com/node.aec) • [Contact](mailto:dev@nodeaec.com.br)
 
 [![Revit Compatibility](https://img.shields.io/badge/Autodesk%20Revit-2023--2027-0696D7?style=flat-square&logo=autodesk)](https://github.com/nodeaec/revit-connector)
 [![Platform](https://img.shields.io/badge/.NET-4.8%20%7C%208.0%20%7C%2010.0-512BD4?style=flat-square&logo=dotnet)](https://github.com/nodeaec/templates-revit)
@@ -81,6 +81,7 @@ flowchart TD
 | [`licensing-lite`](https://github.com/nodeaec/licensing-lite) | `NodeAec.Licensing.Lite` — offline license gate NuGet package. Validates the signed lease locally in 3 lines of code, with no network calls and a fail-closed design. | NuGet, .NET Framework 4.8 / .NET 8 / .NET 10, Ed25519 |
 | [`templates-revit`](https://github.com/nodeaec/templates-revit) | `dotnet new nodeaec-revit-plugin` — Official template for scaffolding licensed Revit add-ins with multi-targeting (2023–2027), build matrix, and automated installer generation. | `dotnet new`, MSBuild, Inno Setup |
 | [`revit-sample-plugin`](https://github.com/nodeaec/revit-sample-plugin) | Reference Revit add-in illustrating end-to-end license gating and UX integration with `NodeAec.Licensing.Lite`. | C#, Revit API, Sample Integration |
+| [`developer-api`](https://github.com/nodeaec/developer-api) | Official **Node.aec Developer API** reference documentation ([live docs site](https://nodeaec.github.io/developer-api/)) and ready-to-clone CI/CD release templates (GitHub Actions, Bash, PowerShell) for automating BIM product, version, binary, and security manifest submissions. | REST API, Bearer Tokens (`aec_...`), GitHub Actions, PowerShell |
 
 ---
 
